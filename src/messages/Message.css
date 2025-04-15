@@ -1,0 +1,28 @@
+.left {
+    text-align: left;
+    margin: 10px;
+  }
+  
+  .right {
+    text-align: right;
+    margin: 10px;
+  }
+  
+  .left h1,
+  .right h1 {
+    display: inline-block;
+    padding: 10px 15px;
+    border-radius: 15px;
+    max-width: 60%;
+  }
+  
+  .left h1 {
+    background-color: #f1f0f0;
+    color: red;
+  }
+  
+  .right h1 {
+    background-color: #d0ebff;
+    color: blue;
+  }
+  
