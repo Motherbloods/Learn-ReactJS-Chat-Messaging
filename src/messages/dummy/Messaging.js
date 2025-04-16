@@ -5,7 +5,7 @@ export const users = [
   { _id: "u4", name: "Reza" },
 ];
 
-export const conversations = [
+export const conversationsData = [
   {
     _id: "c1",
     participants: ["u1", "u2"],
@@ -26,13 +26,6 @@ export const conversations = [
     lastMessage: "m9",
     createdAt: new Date("2024-04-01T12:00:00Z"),
     updatedAt: new Date("2024-04-01T12:15:00Z"),
-  },
-  {
-    _id: "c4",
-    participants: ["u1", "u4"],
-    lastMessage: "m10",
-    createdAt: new Date("2024-04-01T13:00:00Z"),
-    updatedAt: new Date("2024-04-01T13:20:00Z"),
   },
 ];
 
@@ -110,14 +103,5 @@ export const messagesData = [
     text: "Cool, let's meet at the café.",
     receiverId: "u3",
     createdAt: new Date("2024-04-01T12:15:00Z"),
-  },
-
-  {
-    _id: "m10",
-    conversationId: "c4",
-    senderId: "u1",
-    text: "Hey team!",
-    receiverId: "u4",
-    createdAt: new Date("2024-04-01T13:20:00Z"),
   },
 ];

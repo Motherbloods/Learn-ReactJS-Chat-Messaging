@@ -1,13 +1,17 @@
 import { useState, useRef, useEffect, useMemo } from "react";
-import Message from "./Message";
+import Message from "./component/Message";
 import InputChat from "./component/InputChat";
 import HeaderChat from "./component/HeaderChat";
 import useLocalStorageState from "./hooks/useLocalStorageState";
-import { users, conversations, messagesData } from "./dummy/Messaging";
+import { users, conversationsData, messagesData } from "./dummy/Messaging";
+import ConversationSideBar from "./component/ConversationSidebar";
+import ChatBody from "./component/ChatBody";
+import MessageSearch from "./component/MessageSearch";
 
 function Messages() {
 
     const [currentUser, setCurrentUser] = useLocalStorageState('_id', 'u1')
+    const [conversations, setConversations] = useLocalStorageState('conversations-chat', conversationsData)
     const [currentConversation, setCurrentConversation] = useState(null)
     // const [searchValue, setSearchValue] = useState['']
     const [searchValue, setSearchValue] = useState('')
@@ -27,6 +31,7 @@ function Messages() {
     };
 
     const handleConversationChange = (conversationId) => {
+        console.log('ini handle')
         // Reset search-related states when changing conversation
         setSearchValue('');
         setMatchedIndexes([]);
@@ -35,6 +40,31 @@ function Messages() {
         // Set the new conversation
         setCurrentConversation(conversationId);
     };
+
+    const onAddConversation = (receiverId) => {
+        if (receiverId === currentUser) return
+
+        const existingConversation = conversations.find(c =>
+            c.participants.includes(currentUser) &&
+            c.participants.includes(receiverId)
+        );
+
+        if (existingConversation) {
+            // Kalau sudah ada, langsung buka percakapan tersebut
+            setCurrentConversation(existingConversation._id);
+            return;
+        }
+
+        const newConversation = {
+            _id: `c${Date.now()}`,
+            participants: [currentUser, receiverId],
+            lastMessage: null,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+        };
+        setConversations((prev) => [...prev, newConversation])
+        setCurrentConversation(newConversation._id);
+    }
 
     //Untuk menambahkan Pesan baru ke const messages
     const sendMessage = () => {
@@ -139,8 +169,10 @@ function Messages() {
     }, [messages]);
     // Kalau ini dipanggil ketika pertama kali dibuka ditandai dengan []
     useEffect(() => {
-        bottomRef.current?.scrollIntoView({ behavior: "auto" });
-    }, []);
+        if (currentConversation) {
+            bottomRef.current?.scrollIntoView({ behavior: "auto" });
+        }
+    }, [currentConversation]);
 
     useEffect(() => {
         setSearchValue('');
@@ -156,95 +188,11 @@ function Messages() {
                 <HeaderChat currentUser={currentUser} toggleUser={toggleUser} allUsers={users} />
 
                 {/* Input Pencarian */}
-                <div style={{ marginTop: '20px' }}>
-                    <input
-                        type="text"
-                        id="searchInput"
-                        placeholder="Cari pesan..."
-                        value={searchValue}
-                        style={{ width: '70%', padding: '8px' }}
-                        onChange={(e) => setSearchValue(e.target.value)}
-                    />
-                    <button
-                        onClick={handleSearch}
-                        style={{ padding: '8px 12px', marginLeft: '10px' }}
-                    >
-                        Cari
-                    </button>
-                    {searchValue && searchResultCount > 0 && (
-                        <div className="search-navigation" style={{ marginTop: '10px' }}>
-                            <p style={{ fontStyle: 'italic' }}>
-                                Found {searchResultCount} messages containing "<strong>{searchValue}</strong>"
-                            </p>
-                            <div className="navigation-buttons">
-                                <button
-                                    onClick={handlePrevious}
-                                    style={{ marginRight: '10px' }}
-                                    aria-label="Previous result"
-                                >
-                                    ⬅️ Previous
-                                </button>
-                                <button
-                                    onClick={handleNext}
-                                    aria-label="Next result"
-                                >
-                                    Next ➡️
-                                </button>
-                            </div>
-                            <p className="search-status" style={{ fontSize: '12px', marginTop: '5px' }}>
-                                {searchResultsLabel}
-                            </p>
-                        </div>
-                    )}
-                </div>
+                <MessageSearch searchValue={searchValue} setSearchValue={setSearchValue} handleSearch={handleSearch} searchResultCount={searchResultCount} handlePrevious={handlePrevious} handleNext={handleNext} searchResultsLabel={searchResultsLabel} />
             </div>
             <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
-                <div style={{ width: '30%', borderRight: '1px solid #ccc', overflowY: 'auto' }}>
-                    {conversations
-                        .filter(cvn => cvn.participants.includes(currentUser)) // Hanya tampilkan percakapan yang melibatkan currentUser
-                        .map((cvn, idx) => {
-                            // Temukan user lain yang ikut dalam percakapan selain currentUser
-                            const otherUserId = cvn.participants.find((id) => id !== currentUser);
-                            const otherUser = users.find((user) => user._id === otherUserId);
-                            // kalau mau fungsi langsung dirender pakai {nama fungsi} kalau mau ketika diklik saja pakai {()=>nama fungsi}
-                            return (
-                                <div key={idx} style={{ display: 'flex', cursor: 'pointer', alignItems: 'center', padding: '10px', borderBottom: '1px solid #eee' }} onClick={() => handleConversationChange(cvn._id)}>
-                                    <div>
-                                        <img
-                                            style={{ width: '50px', height: '50px', borderRadius: '50%', objectFit: 'cover', marginRight: '10px' }}
-                                            src={otherUser?.avatar || "https://images.unsplash.com/photo-1741851373451-59e7260fe72c?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"}
-                                            alt={otherUser?.name}
-                                        />
-                                    </div>
-                                    <div>
-                                        <div style={{ fontWeight: 'bold' }}>{otherUser?.name || "Unknown User"}</div>
-                                    </div>
-                                </div>
-                            );
-                        })}
-                </div>
-
-
-                <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                    {currentConversation ? <div style={{ flex: 1, overflowY: 'auto', padding: '10px' }}>
-                        {filteredMessages.map((message, index) => {
-
-                            return (
-                                <div key={index} ref={(el) => messageRefs.current[message.originalIndex] = el}>
-                                    <Message
-                                        key={index}
-                                        message={
-                                            typeof message.text === 'string'
-                                                ? highlightText(message.text, searchValue)
-                                                : message.text // untuk gambar tetap tampil normal
-                                        }
-                                        isSender={message.senderId === currentUser}
-                                    />
-                                </div>)
-                        })}
-                        <div ref={bottomRef} />
-                    </div> : <div style={{ display: 'flex', alignContent: 'center' }}>Mulai Chat</div>}
-                </div>
+                <ConversationSideBar conversations={conversations} currentUser={currentUser} users={users} onSelectedConversation={handleConversationChange} onAddConversation={onAddConversation} />
+                <ChatBody filteredMessages={filteredMessages} messageRefs={messageRefs} highlightText={highlightText} searchValue={searchValue} currentUser={currentUser} bottomRef={bottomRef} />
             </div>
             <InputChat newMessage={newMessage} setNewMessage={setNewMessage} sendMessage={sendMessage} />
         </div >
