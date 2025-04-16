@@ -42,7 +42,7 @@ export const messagesData = [
     conversationId: "c1",
     senderId: "u1",
     text: "Hey Bob!",
-    receiverId: [],
+    receiverId: "u2",
     createdAt: new Date("2024-04-01T10:01:00Z"),
   },
   {
@@ -50,7 +50,7 @@ export const messagesData = [
     conversationId: "c1",
     senderId: "u2",
     text: "Hi Alice!",
-    receiverId: ["u1"],
+    receiverId: "u1",
     createdAt: new Date("2024-04-01T10:02:00Z"),
   },
   {
@@ -58,7 +58,7 @@ export const messagesData = [
     conversationId: "c1",
     senderId: "u1",
     text: "How are you?",
-    receiverId: ["u2"],
+    receiverId: "u2",
     createdAt: new Date("2024-04-01T10:10:00Z"),
   },
 
@@ -67,7 +67,7 @@ export const messagesData = [
     conversationId: "c2",
     senderId: "u3",
     text: "Hi Alice!",
-    receiverId: ["u1"],
+    receiverId: "u1",
     createdAt: new Date("2024-04-01T11:01:00Z"),
   },
   {
@@ -75,7 +75,7 @@ export const messagesData = [
     conversationId: "c2",
     senderId: "u1",
     text: "Hey Charlie!",
-    receiverId: ["u3"],
+    receiverId: "u3",
     createdAt: new Date("2024-04-01T11:05:00Z"),
   },
   {
@@ -83,7 +83,7 @@ export const messagesData = [
     conversationId: "c2",
     senderId: "u3",
     text: "Wanna catch up later?",
-    receiverId: [],
+    receiverId: "u1",
     createdAt: new Date("2024-04-01T11:10:00Z"),
   },
 
@@ -92,7 +92,7 @@ export const messagesData = [
     conversationId: "c3",
     senderId: "u2",
     text: "Charlie, are you free today?",
-    receiverId: [],
+    receiverId: "u3",
     createdAt: new Date("2024-04-01T12:05:00Z"),
   },
   {
@@ -108,7 +108,7 @@ export const messagesData = [
     conversationId: "c3",
     senderId: "u2",
     text: "Cool, let's meet at the café.",
-    receiverId: ["u3"],
+    receiverId: "u3",
     createdAt: new Date("2024-04-01T12:15:00Z"),
   },
 
@@ -117,7 +117,7 @@ export const messagesData = [
     conversationId: "c4",
     senderId: "u1",
     text: "Hey team!",
-    receiverId: [],
+    receiverId: "u4",
     createdAt: new Date("2024-04-01T13:20:00Z"),
   },
 ];
